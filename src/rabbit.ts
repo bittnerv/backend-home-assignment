@@ -1,4 +1,4 @@
-import "dotenv/config";
+import 'dotenv/config';
 import { Connection } from 'rabbitmq-client'
 
 const rabbitUrl = `${process.env.RABBIT_URL}`;
@@ -12,6 +12,6 @@ rabbit.on('error', (error) => {
   console.log('RabbitMQ connection error', error)
 });
 
-export const carUpdatesQueue = "car-updates";
+export const carUpdatesQueue = 'car-updates';
 
 export { rabbit };

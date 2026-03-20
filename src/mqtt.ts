@@ -1,5 +1,5 @@
-import "dotenv/config";
-import mqtt from "mqtt";
+import 'dotenv/config';
+import mqtt from 'mqtt';
 import { logger } from './logger';
 
 const mqttUrl = `${process.env.MQTT_URL}`;
@@ -9,7 +9,7 @@ const mqttClient = mqtt.connect(mqttUrl, {
   clean: true,
   connectTimeout: 4000,
   username: `${process.env.MQTT_USER}`,
-  password: `${process.env.MQTT_USER}`,
+  password: `${process.env.MQTT_PASSWORD}`,
   reconnectPeriod: 1000,
 });
 

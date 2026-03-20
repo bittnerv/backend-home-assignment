@@ -1,14 +1,14 @@
 class Logger {
     public info(...params: unknown[]) {
-        console.info(new Date().toISOString(), "INFO:", ...params);
+        console.info(new Date().toISOString(), 'INFO:', ...params);
     }
 
     public warn(...params: unknown[]) {
-        console.warn(new Date().toISOString(), "WARN:", ...params);
+        console.warn(new Date().toISOString(), 'WARN:', ...params);
     }
 
     public error(...params: unknown[]) {
-        console.error(new Date().toISOString(), "ERROR:", ...params);
+        console.error(new Date().toISOString(), 'ERROR:', ...params);
     }
 }
 
