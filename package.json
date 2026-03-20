@@ -4,10 +4,22 @@
   "scripts": {
     "collector": "tsx src/collector.ts",
     "writer": "tsx src/writer.ts",
-    "all": "tsx src/collector.ts && tsx src/writer.ts"
+    "db:generate": "pnpm dlx prisma generate",
+    "db:pull": "pnpm dlx prisma db pull",
+    "db:push": "pnpm dlx prisma db push"
   },
   "packageManager": "pnpm@10.7.1",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
+    "dotenv": "^17.3.1",
+    "mqtt": "^5.15.0",
+    "pg": "^8.20.0",
+    "rabbitmq-client": "^5.0.8",
     "tsx": "^4.19.4"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.18.0",
+    "prisma": "^7.5.0"
   }
 }

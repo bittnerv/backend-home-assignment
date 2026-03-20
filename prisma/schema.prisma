@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model car_state {
+  id              Int       @id @default(autoincrement())
+  car_id          Int?
+  time            DateTime? @db.Timestamp(6)
+  state_of_charge Int?
+  latitude        Float?
+  longitude       Float?
+  gear            Int?
+  speed           Float?
+}
