@@ -1,6 +1,6 @@
 import { CarStateUpdate, prisma } from './db';
 import { logger } from './logger';
-import { carUpdatesQueue, rabbit } from './rabbit';
+import { carUpdatesQueue, connectToRabbit } from './rabbit';
 
 const createNewCarStates = async (carStateUpdates: CarStateUpdate[]) => {
     logger.info('saving car state updates', carStateUpdates);
@@ -9,6 +9,7 @@ const createNewCarStates = async (carStateUpdates: CarStateUpdate[]) => {
     })
 }
 
+const rabbit = connectToRabbit();
 const rabbitSub = rabbit.createConsumer({
     queue: carUpdatesQueue,
     queueOptions: { durable: true },

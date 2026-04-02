@@ -1,18 +1,21 @@
 import { logger } from './logger';
 import { CarStateUpdate } from './db';
 import { applyCarDataUpdate, CarData, computeSOC } from './car-data';
-import { carUpdatesQueue, rabbit } from './rabbit';
-import { mqttClient } from './mqtt';
+import { carUpdatesQueue, connectToRabbit } from './rabbit';
+import { createMqttClient, subscribeToMqttTopic } from './mqtt';
+
+const mqttClient = createMqttClient();
+
+const rabbit = connectToRabbit();
+const rabbitPub = rabbit.createPublisher({
+  confirm: true,
+  maxAttempts: 2,
+});
+const carUpdatesChunkSize = 10;
 
 const cars: Array<CarData> = [];
 
-mqttClient.on('connect', () => {
-  mqttClient.subscribe(['car/#'], () => {
-     logger.info('Subscribed to car topics');
-  });
-});
-
-mqttClient.on('message', (topic, payload) => {
+subscribeToMqttTopic(mqttClient, 'car/#', (topic, payload) => {
   const data = JSON.parse(new TextDecoder().decode(payload));
   const [entity, entityId, ...path] = topic.split('/');
 
@@ -30,13 +33,6 @@ mqttClient.on('message', (topic, payload) => {
   }
 });
 
-const rabbitPub = rabbit.createPublisher({
-  confirm: true,
-  maxAttempts: 2,
-});
-
-const carUpdatesChunkSize = 10;
-
 setInterval(async () => {
     const carUpdates = cars.map((car): CarStateUpdate => ({
       car_id: car.carId,
@@ -52,6 +48,6 @@ setInterval(async () => {
 
     for (let i = 0; i < carUpdates.length; i += carUpdatesChunkSize) {
         const carUpdatesChunk = carUpdates.slice(i, i + carUpdatesChunkSize);
-        rabbitPub.send(carUpdatesQueue, carUpdatesChunk);
+        await rabbitPub.send(carUpdatesQueue, carUpdatesChunk);
     }
 }, 5000);

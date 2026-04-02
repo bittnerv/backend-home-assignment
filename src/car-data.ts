@@ -9,15 +9,18 @@ export interface CarData {
     speed?: number;
 }
 
+const msToKh = (value: number): number => value*3.6;
+const gearToNumber = (value: unknown): number => value === 'N' ? 0 : Number(value);
+
 export const applyCarDataUpdate = (car: CarData, path: string[], value: unknown): void => {
     if (path[0] === 'location' && path[1] === 'latitude') {
         car.latitude = Number(value);
     } else if (path[0] === 'location' && path[1] === 'longitude') {
         car.longitude = Number(value);
     } else if (path[0] === 'speed') {
-        car.speed = Number(value) * 3.6; // m/s -> km/h
+        car.speed = msToKh(Number(value));
     } else if (path[0] === 'gear') {
-        car.gear = value === 'N' ? 0 : Number(value); // N,1-6 -> 0-6
+        car.gear = gearToNumber(value);
     } else if (path[0] === 'battery' && path[2] === 'soc') {
         const batteryIndex = Number(path[1]);
         const battery = car.batteries[batteryIndex] ?? {};
@@ -31,7 +34,7 @@ export const applyCarDataUpdate = (car: CarData, path: string[], value: unknown)
         battery.capacity = Number(value);
         car.batteries[batteryIndex] = battery;
     } else {
-        logger.warn('Unknown car path', path)
+        logger.warn('Unknown car path', path, value)
     }
 }
 
