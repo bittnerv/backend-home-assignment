@@ -9,16 +9,22 @@ const createNewCarStates = async (carStateUpdates: CarStateUpdate[]) => {
     })
 }
 
-const rabbit = connectToRabbit();
-const rabbitSub = rabbit.createConsumer({
-    queue: carUpdatesQueue,
-    queueOptions: { durable: true },
-    qos: { prefetchCount: 2 },
-}, async (message) => {
-    const carUpdates = message.body as CarStateUpdate[];
-    await createNewCarStates(carUpdates);
-});
+const startWriter = async () => {
+    const rabbit = connectToRabbit();
+    const rabbitSub = rabbit.createConsumer({
+        queue: carUpdatesQueue,
+        queueOptions: { durable: true },
+        qos: { prefetchCount: 2 },
+    }, async (message) => {
+        const carUpdates = message.body as CarStateUpdate[];
+        await createNewCarStates(carUpdates);
+    });
 
-rabbitSub.on('error', (err) => {
-  logger.error('consumer error', carUpdatesQueue, err)
-});
+    rabbitSub.on('error', (err) => {
+        logger.error('consumer error', carUpdatesQueue, err)
+    });
+
+    logger.info('Started writer');
+}
+
+startWriter();
